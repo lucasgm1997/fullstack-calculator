@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1
 # Build context is the repository root so the shared design-system/ tokens are available.
-FROM node:24-alpine AS build
+# The build output is static files, identical for every CPU, so the build stage
+# runs on the builder's native platform; only the nginx stage is per-platform.
+FROM --platform=$BUILDPLATFORM node:24-alpine AS build
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci

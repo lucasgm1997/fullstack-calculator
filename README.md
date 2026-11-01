@@ -4,6 +4,7 @@ A calculator with a **React + TypeScript + Vite** frontend and a **Go + Gin** RE
 
 - **Operations:** add, subtract, multiply, divide, plus optional power, square root and percentage
 - **Validation and errors:** malformed JSON, wrong types, missing operands, unsupported operations, division by zero, square root of a negative number, overflow
+- **Rate limiting:** per client IP (default 20 requests/minute), returning `429` with `Retry-After`, and resistant to spoofed `X-Forwarded-For` headers
 - **UI:** keypad with physical keyboard support, validation feedback, an API status indicator, a "Last API call" inspector and calculation history. Mobile-first layout built on the Sezzle-inspired design system in [`design-system/`](design-system/DESIGN.md)
 - **Tests:** Go unit and HTTP integration tests (100% statement coverage of `internal/`), Vitest unit and React Testing Library + MSW integration tests, and **Playwright E2E** tests of the real React app against the real Go API, on desktop and mobile
 - **Docker:** multi-stage images and Docker Compose, with nginx proxying `/api`
@@ -81,12 +82,14 @@ More diagrams are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): the full ba
 
 ```text
 backend/                      Go + Gin API
-  cmd/api/main.go             entrypoint (PORT env, graceful shutdown)
+  cmd/api/main.go             entrypoint (config from env, graceful shutdown)
+  internal/config/            env config: PORT, RATE_LIMIT_*, TRUSTED_PROXIES
   internal/router/            route + middleware registration
   internal/handler/           HTTP ↔ use case, error → status mapping
   internal/usecase/           input validation, orchestration (no Gin)
   internal/domain/            pure arithmetic + domain errors
   internal/dto/               JSON request/response contract
+  internal/middleware/        per-client-IP rate limiting (token bucket)
   internal/docs/              openapi.yaml (embedded) + Swagger UI handler
   tests/                      httptest integration tests (full stack)
 docs/ARCHITECTURE.md          Mermaid diagrams (flows, layers, state machine)
@@ -257,7 +260,27 @@ Success returns `200 {"result": <number>}`. Every error returns `{"error": "<mes
 | 400 | result overflows or is undefined (for example `(-8)^0.5`) | `result is not a finite number` |
 | 400 | body larger than 4 KB | `request body too large` |
 | 404 / 405 | unknown route / wrong method | `not found` / `method not allowed` |
+| 429 | more than the per-client rate limit (see below) | `too many requests, try again in 3 seconds` |
 | 500 | unexpected error (details are only logged) | `internal server error` |
+
+### Rate limiting
+
+Every endpoint except `/api/health` is limited **per client IP** with a token bucket. A client can burst up to `RATE_LIMIT_REQUESTS` calls, and the budget then refills evenly over `RATE_LIMIT_WINDOW`.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `RATE_LIMIT_REQUESTS` | `20` | requests per window per client; `0` disables limiting |
+| `RATE_LIMIT_WINDOW` | `1m` | Go duration (`30s`, `1m`, `1h`) |
+| `TRUSTED_PROXIES` | loopback + private networks | proxies allowed to set `X-Forwarded-For`: comma-separated CIDRs, or `none` |
+
+- Every limited response carries `X-RateLimit-Limit` and `X-RateLimit-Remaining`.
+- Over the limit, the API answers `429 {"error":"too many requests, try again in N seconds"}` with a `Retry-After: N` header. The UI shows that message.
+
+```bash
+# with RATE_LIMIT_REQUESTS=3
+for i in 1 2 3 4; do curl -s -o /dev/null -w '%{http_code} ' -X POST localhost:8080/api/calculate -d '{"operation":"add","a":1,"b":1}'; done
+# 200 200 200 429
+```
 
 ### `GET /api/health`
 
@@ -298,6 +321,22 @@ curl -X POST localhost:8080/api/calculate -H 'Content-Type: application/json' \
 
 **HTTP statuses.** Division by zero and the other arithmetic errors return 400, as proposed in the project guidelines. They are client input problems, not server faults.
 
+**Rate limiting is per client IP, in memory.**
+- **Algorithm:** a token bucket (`golang.org/x/time/rate`, the official Go package) for each client IP, in Gin middleware. It covers every route, including 404s, except the health check, which the UI polls.
+- **Rejected requests are free:** a rejected request gives its token back, so hammering while blocked does not extend the block.
+- **Bounded memory:** clients idle for a whole window are dropped, so a flood of distinct IPs cannot grow memory without limit.
+
+**The real client IP, without spoofing.** Behind a proxy, every request comes from the proxy's address, so the API reads `X-Forwarded-For`. It only trusts that header from `TRUSTED_PROXIES`, which default to private networks (Vite, nginx, Caddy, Docker), so a client cannot fake its IP to get a fresh budget.
+
+| Path | How the client IP is found |
+| --- | --- |
+| Production (Caddy → nginx → Go) | Caddy discards client-sent forwarding headers, so spoofing is impossible |
+| Development | Vite forwards the client IP (`xfwd: true`), so your phone and your Mac get separate budgets |
+
+The production behavior was checked against the real Caddy → nginx → Go stack: calls 1–3 succeed, call 4 gets `429`, and spoofed `X-Forwarded-For` and `X-Real-IP` headers are still blocked.
+
+**What this does and does not protect against.** It stops abuse from individual clients: scripts hammering the API, brute-force loops, an accidental retry storm. It does **not** stop a distributed DDoS, where thousands of IPs saturate the network before requests reach Go. That needs an edge service such as Cloudflare or OCI WAF.
+
 **Non-finite results are errors.** JSON cannot encode `Inf` or `NaN`, so overflow and undefined results are rejected explicitly instead of failing during encoding.
 
 **Frontend: an MVVM-inspired structure.**
@@ -334,7 +373,9 @@ curl -X POST localhost:8080/api/calculate -H 'Content-Type: application/json' \
 - History is kept in memory and is lost on reload.
 - The "Last API call" panel shows the error body for HTTP errors. For network failures there is no body, so it shows "network error".
 - E2E tests run in Chromium only (desktop and a Pixel 7 viewport). WebKit and Firefox are not included, to keep CI fast.
-- Not implemented: rate limiting and authentication.
+- Rate-limit state is in memory, per API instance. With several replicas each would keep its own budget, so a shared store such as Redis would be needed. Restarting the API resets all budgets.
+- In development, the Vite and nginx proxies trust `X-Forwarded-For` from private networks, so a client on your own LAN could spoof its IP. Production (Caddy) is not affected.
+- Not implemented: authentication.
 
 ## AI usage
 

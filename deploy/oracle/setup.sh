@@ -8,12 +8,30 @@
 #           Without it the app is served over HTTP on the VM's public IP.
 #
 # Env: BRANCH (default: main), APP_DIR (default: ~/calculator)
+#      USE_PREBUILT_IMAGES=auto|true|false (default auto: true when RAM < 2 GB).
+#      Prebuilt images come from GitHub Container Registry (published by CI), so
+#      tiny VMs like the Always Free E2.1.Micro (1 GB) never build anything.
 set -euo pipefail
 
 REPO_URL=${1:?usage: setup.sh <git-repo-url> [domain]}
 SITE_ADDRESS=${2:-:80}
 BRANCH=${BRANCH:-main}
 APP_DIR=${APP_DIR:-$HOME/calculator}
+USE_PREBUILT_IMAGES=${USE_PREBUILT_IMAGES:-auto}
+
+MEM_MB=$(awk '/MemTotal/ {print int($2 / 1024)}' /proc/meminfo)
+if [ "$USE_PREBUILT_IMAGES" = auto ]; then
+  if [ "$MEM_MB" -lt 2048 ]; then USE_PREBUILT_IMAGES=true; else USE_PREBUILT_IMAGES=false; fi
+fi
+
+if [ "$MEM_MB" -lt 2048 ] && ! swapon --show | grep -q .; then
+  echo "==> ${MEM_MB} MB RAM: adding a 2 GB swap file"
+  sudo fallocate -l 2G /swapfile
+  sudo chmod 600 /swapfile
+  sudo mkswap /swapfile >/dev/null
+  sudo swapon /swapfile
+  grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab >/dev/null
+fi
 
 echo "==> Installing Docker (if needed)"
 if ! command -v docker >/dev/null 2>&1; then
@@ -47,8 +65,21 @@ fi
 cd "$APP_DIR"
 
 echo "==> Building and starting (SITE_ADDRESS=${SITE_ADDRESS})"
-echo "SITE_ADDRESS=${SITE_ADDRESS}" >.env
-sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml up -d --build --remove-orphans
+# Update only SITE_ADDRESS, keeping other settings (e.g. RATE_LIMIT_*) in .env.
+touch .env
+grep -v '^SITE_ADDRESS=' .env >.env.tmp || true
+echo "SITE_ADDRESS=${SITE_ADDRESS}" >>.env.tmp
+mv .env.tmp .env
+COMPOSE=(sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml)
+if [ "$USE_PREBUILT_IMAGES" = true ]; then
+  echo "    using prebuilt images from ghcr.io (${MEM_MB} MB RAM)"
+  COMPOSE+=(-f deploy/oracle/compose.images.yaml)
+  "${COMPOSE[@]}" pull
+  "${COMPOSE[@]}" up -d --remove-orphans
+else
+  echo "    building images on this machine (${MEM_MB} MB RAM)"
+  "${COMPOSE[@]}" up -d --build --remove-orphans
+fi
 sudo docker image prune -f >/dev/null
 
 echo "==> Waiting for the API"
