@@ -10,18 +10,23 @@ import (
 	"syscall"
 	"time"
 
+	"calculator-api/internal/config"
 	"calculator-api/internal/router"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	cfg, err := config.Load(os.Getenv)
+	if err != nil {
+		log.Fatalf("config: %v", err)
+	}
+	engine, err := router.New(cfg)
+	if err != nil {
+		log.Fatalf("router: %v", err)
 	}
 
 	srv := &http.Server{
-		Addr:              ":" + port,
-		Handler:           router.New(),
+		Addr:              ":" + cfg.Port,
+		Handler:           engine,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
@@ -29,7 +34,7 @@ func main() {
 	defer stop()
 
 	go func() {
-		log.Printf("calculator API listening on :%s", port)
+		log.Printf("calculator API listening on :%s (rate limit: %d req / %s per client)", cfg.Port, cfg.RateLimitRequests, cfg.RateLimitWindow)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("server error: %v", err)
 		}
