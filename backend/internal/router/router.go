@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"calculator-api/internal/docs"
 	"calculator-api/internal/dto"
 	"calculator-api/internal/handler"
 	"calculator-api/internal/usecase"
@@ -22,6 +23,8 @@ func New() *gin.Engine {
 	api := r.Group("/api")
 	api.GET("/health", handler.Health)
 	api.POST("/calculate", calculatorHandler.Calculate)
+	api.GET("/openapi.yaml", docs.Spec)
+	api.GET("/docs", docs.UI)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "not found"})

@@ -72,7 +72,7 @@ func TestCalculateErrors(t *testing.T) {
 }
 
 func TestOperationIsValid(t *testing.T) {
-	for _, op := range []Operation{Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage} {
+	for _, op := range Operations {
 		if !op.IsValid() {
 			t.Errorf("%q should be valid", op)
 		}

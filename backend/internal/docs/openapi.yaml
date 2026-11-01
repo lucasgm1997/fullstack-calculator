@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: Calculator API
+  version: 1.0.0
+  description: |
+    REST API behind the full-stack calculator. All arithmetic happens here; the
+    React frontend only collects input and renders results.
+
+    - Every response body is JSON.
+    - Errors always have the shape `{"error": "<message>"}`.
+    - Arithmetic errors (e.g. division by zero) are client errors and return **400**.
+servers:
+  - url: /
+    description: Same origin (direct, or through the Vite / nginx proxy)
+# Public API: no authentication.
+security: []
+tags:
+  - name: Calculator
+    description: Arithmetic operations
+  - name: Health
+    description: Service liveness
+
+paths:
+  /api/calculate:
+    post:
+      tags: [Calculator]
+      operationId: calculate
+      summary: Perform a calculation
+      description: |
+        Applies `operation` to `a` and `b`.
+
+        | operation    | formula        | needs `b` |
+        | ------------ | -------------- | --------- |
+        | `add`        | a + b          | yes       |
+        | `subtract`   | a − b          | yes       |
+        | `multiply`   | a × b          | yes       |
+        | `divide`     | a ÷ b          | yes       |
+        | `power`      | aᵇ             | yes       |
+        | `sqrt`       | √a             | no (ignored) |
+        | `percentage` | (a / 100) × b — "a percent of b" | yes |
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateRequest'
+            examples:
+              add:
+                summary: 10 + 5
+                value: { operation: add, a: 10, b: 5 }
+              subtract:
+                summary: 10 − 5
+                value: { operation: subtract, a: 10, b: 5 }
+              multiply:
+                summary: 10 × 5
+                value: { operation: multiply, a: 10, b: 5 }
+              divide:
+                summary: 10 ÷ 4
+                value: { operation: divide, a: 10, b: 4 }
+              power:
+                summary: 2 ^ 10
+                value: { operation: power, a: 2, b: 10 }
+              sqrt:
+                summary: √81 (unary, no b)
+                value: { operation: sqrt, a: 81 }
+              percentage:
+                summary: 15% of 200
+                value: { operation: percentage, a: 15, b: 200 }
+              divisionByZero:
+                summary: 10 ÷ 0 (returns 400)
+                value: { operation: divide, a: 10, b: 0 }
+      responses:
+        '200':
+          description: Calculation succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculateResponse'
+              example: { result: 15 }
+        '400':
+          description: Invalid request or arithmetic error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                divisionByZero:
+                  value: { error: division by zero }
+                negativeSqrt:
+                  value: { error: square root of a negative number }
+                nonFinite:
+                  summary: Overflow or undefined result, e.g. (-8)^0.5
+                  value: { error: result is not a finite number }
+                unsupportedOperation:
+                  value: { error: 'unsupported operation "modulo"' }
+                missingOperand:
+                  value: { error: 'missing operand: field "b" is required for add' }
+                wrongType:
+                  value: { error: 'field "a" must be a finite number' }
+                malformedJson:
+                  value: { error: request body must be valid JSON }
+                tooLarge:
+                  summary: Body larger than 4 KB
+                  value: { error: request body too large }
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '500':
+          description: Unexpected error. Details are logged, never returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example: { error: internal server error }
+
+  /api/health:
+    get:
+      tags: [Health]
+      operationId: health
+      summary: Liveness check
+      responses:
+        '200':
+          description: The API is up.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example: { status: ok }
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+
+components:
+  schemas:
+    Operation:
+      type: string
+      enum: [add, subtract, multiply, divide, power, sqrt, percentage]
+    CalculateRequest:
+      type: object
+      required: [operation, a]
+      properties:
+        operation:
+          $ref: '#/components/schemas/Operation'
+        a:
+          type: number
+          format: double
+          description: First operand. `null` counts as missing.
+        b:
+          type: number
+          format: double
+          description: Second operand. Required for every operation except `sqrt`.
+    CalculateResponse:
+      type: object
+      required: [result]
+      properties:
+        result:
+          type: number
+          format: double
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    HealthResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+  responses:
+    MethodNotAllowed:
+      description: Wrong HTTP method for this path.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example: { error: method not allowed }

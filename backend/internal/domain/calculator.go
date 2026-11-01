@@ -5,6 +5,7 @@ package domain
 import (
 	"errors"
 	"math"
+	"slices"
 )
 
 // Operation identifies an arithmetic operation.
@@ -28,13 +29,12 @@ var (
 	ErrNonFiniteResult      = errors.New("result is not a finite number")
 )
 
+// Operations lists every supported operation.
+var Operations = []Operation{Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage}
+
 // IsValid reports whether op is a known operation.
 func (op Operation) IsValid() bool {
-	switch op {
-	case Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage:
-		return true
-	}
-	return false
+	return slices.Contains(Operations, op)
 }
 
 // IsUnary reports whether op takes a single operand. Unary operations ignore b.

@@ -98,6 +98,24 @@ func TestHealth(t *testing.T) {
 	}
 }
 
+func TestAPIDocs(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	for path, wantType := range map[string]string{
+		"/api/openapi.yaml": "application/yaml",
+		"/api/docs":         "text/html",
+	} {
+		w := httptest.NewRecorder()
+		router.New().ServeHTTP(w, httptest.NewRequest(http.MethodGet, path, nil))
+
+		if w.Code != http.StatusOK {
+			t.Errorf("%s: status = %d", path, w.Code)
+		}
+		if ct := w.Header().Get("Content-Type"); !strings.HasPrefix(ct, wantType) {
+			t.Errorf("%s: Content-Type = %q, want %s", path, ct, wantType)
+		}
+	}
+}
+
 func TestUnknownRoutesReturnJSON(t *testing.T) {
 	if status, body := do(t, http.MethodGet, "/api/nope", ""); status != http.StatusNotFound || body["error"] != "not found" {
 		t.Errorf("unknown route: got %d %v", status, body)
