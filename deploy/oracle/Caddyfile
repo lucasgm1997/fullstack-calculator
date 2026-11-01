@@ -1,0 +1,7 @@
+# SITE_ADDRESS is ":80" (plain HTTP on the VM's IP) by default.
+# Set it to a domain, e.g. "calc.example.duckdns.org", and Caddy obtains and
+# renews a Let's Encrypt certificate automatically (HTTPS + HTTP→HTTPS redirect).
+{$SITE_ADDRESS::80} {
+	encode gzip
+	reverse_proxy frontend:80
+}

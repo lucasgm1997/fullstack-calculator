@@ -13,3 +13,8 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 7. > add the screenshots in readme.me
 8. > and about integrations and e2e tests, we have?
 9. > let's add e2e test on frontend using playwright
+10. > how can i run the e2e test to check?
+11. > (pasted terminal output: `npm run test:e2e:ui` → `npm error Missing script: "test:e2e:ui"`, run from the repository root)
+12. > in which cloud provider i can deploy this project for prod? oracle provider? needs to be free tier
+13. > and about vercel?
+14. > (pasted link) https://www.oracle.com/cloud/sign-in.html (tracking parameters removed)

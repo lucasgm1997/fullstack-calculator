@@ -144,6 +144,18 @@ docker compose up --build
 
 The frontend image is a static build served by nginx, which also proxies `/api/` to the `backend` service. The browser cannot resolve Docker service hostnames, so the browser always calls its own origin and nginx forwards the request inside the Docker network. The frontend image is built from the repository root because it imports `design-system/tokens.css`.
 
+## Deploying (Oracle Cloud Always Free)
+
+The same Compose stack runs on a single free Oracle Cloud VM. A production override adds **Caddy** for automatic HTTPS and exposes only ports 80/443:
+
+```bash
+# on an Ubuntu VM (after opening 80/443 in the VCN Security List)
+git clone <repo-url> ~/calculator
+~/calculator/deploy/oracle/setup.sh <repo-url> [your-domain]
+```
+
+The step-by-step guide is in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). It covers account and VM creation, Oracle's two firewalls, a free DuckDNS domain for HTTPS, operations and troubleshooting.
+
 ## Tests and coverage
 
 **Backend**
