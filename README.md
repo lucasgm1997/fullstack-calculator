@@ -8,6 +8,59 @@ A calculator with a **React + TypeScript + Vite** frontend and a **Go + Gin** RE
 - **Tests:** Go unit and HTTP integration tests (100% statement coverage of `internal/`), plus Vitest unit and React Testing Library + MSW integration tests
 - **Docker:** multi-stage images and Docker Compose, with nginx proxying `/api`
 - **CI:** GitHub Actions for formatting, lint, type check, tests with coverage, builds and the Docker build
+- **API docs:** an OpenAPI 3 spec with interactive **Swagger UI** at [`/api/docs`](#api-documentation-swagger--openapi), plus Mermaid diagrams in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
+## Architecture at a glance
+
+The browser only calls its own origin. A proxy (Vite in development, nginx in Docker) forwards `/api/*` to the Go service, which processes the request as **Router → Handler → Use case → Domain**.
+
+```mermaid
+flowchart LR
+    user([User<br/>desktop or phone]) --> spa[React SPA]
+    spa -- "POST /api/calculate" --> proxy{{Vite :5173 / nginx :3000}}
+    proxy -- "/api/*" --> router[Gin router]
+    subgraph api[Go API :8080]
+        router --> handler[Handler<br/>bind JSON · map errors]
+        handler --> usecase[Use case<br/>validate operands]
+        usecase --> domain[Domain<br/>pure arithmetic]
+        router --> docs[Swagger UI + OpenAPI]
+    end
+```
+
+What happens when the user calculates `12 ÷ 4`:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant VM as useCalculator<br/>(React)
+    participant S as calculatorService
+    participant H as Handler (Gin)
+    participant UC as Use case
+    participant D as Domain
+
+    U->>VM: 1, 2, ÷, 4 (local state only)
+    U->>VM: =
+    VM->>S: calculate({divide, 12, 4})
+    S->>H: POST /api/calculate (via proxy)
+    H->>H: bind + validate JSON
+    H->>UC: Execute(input)
+    UC->>UC: operation known? a and b present?
+    UC->>D: Calculate(divide, 12, 4)
+    alt b == 0
+        D-->>H: ErrDivisionByZero
+        H-->>S: 400 {"error":"division by zero"}
+        S-->>VM: CalculatorError("Division by zero")
+        VM-->>U: red display + message
+    else ok
+        D-->>H: 3
+        H-->>S: 200 {"result":3}
+        S-->>VM: 3
+        VM-->>U: shows 3, adds to history
+    end
+```
+
+More diagrams are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): the full backend decision flow, error mapping, package dependencies, frontend layers, the keypad state machine, chained operations and deployment topologies.
 
 ## Repository layout
 
@@ -19,7 +72,9 @@ backend/                      Go + Gin API
   internal/usecase/           input validation, orchestration (no Gin)
   internal/domain/            pure arithmetic + domain errors
   internal/dto/               JSON request/response contract
+  internal/docs/              openapi.yaml (embedded) + Swagger UI handler
   tests/                      httptest integration tests (full stack)
+docs/ARCHITECTURE.md          Mermaid diagrams (flows, layers, state machine)
 frontend/                     React + TypeScript + Vite + Tailwind v4
   src/features/calculator/
     CalculatorPage.tsx        page composition + keyboard support
@@ -87,7 +142,8 @@ go tool cover -html=coverage.out -o coverage.html                 # HTML report
 - `internal/domain`: table-driven tests of every operation and every error (overflow, NaN, unknown operation, and so on)
 - `internal/usecase`: operand presence (`nil` vs `0`), unary vs binary handling, and error propagation
 - `internal/handler`: handler tests against a fake use case, covering JSON decoding errors, error-to-status mapping and a hidden 500
-- `tests/`: integration tests through the real Gin router with `httptest`, covering every operation, every error, the JSON content type, 404 and 405
+- `internal/docs`: a contract test that fails if the `Operation` enum in `openapi.yaml` drifts from `domain.Operations`
+- `tests/`: integration tests through the real Gin router with `httptest`, covering every operation, every error, the JSON content type, the docs routes, 404 and 405
 
 **Frontend**
 
@@ -106,6 +162,22 @@ npm run lint && npm run typecheck
 Current results: frontend 44 tests, 94% statements and 98% lines. Backend 100% statements of `internal/`.
 
 ## API
+
+### API documentation (Swagger / OpenAPI)
+
+The API is described by a hand-written OpenAPI 3.0 spec, [`backend/internal/docs/openapi.yaml`](backend/internal/docs/openapi.yaml). It is embedded in the Go binary with `go:embed`, so the docs always ship with the code they describe.
+
+| URL | What |
+| --- | --- |
+| http://localhost:8080/api/docs | **Swagger UI**: browse the endpoints, with request examples for every operation and every error, and use **"Try it out"** to call the API |
+| http://localhost:8080/api/openapi.yaml | raw spec, which you can import into Postman, Insomnia or a client generator |
+
+They are also reachable through the frontend's proxy: `localhost:5173/api/docs` in dev and `localhost:3000/api/docs` in Docker.
+
+- **Hand-written, not generated:** writing the spec by hand avoids annotation-driven code generation (swaggo) and its extra dependencies for a two-endpoint API.
+- **Drift is caught by a test:** `internal/docs/docs_test.go` fails if the spec's `Operation` enum and `domain.Operations` disagree, or if a route is undocumented.
+- **Lint result:** `npx @redocly/cli lint backend/internal/docs/openapi.yaml` passes with one warning (no license field).
+- **Swagger UI is loaded from a pinned CDN version,** so the page needs internet access. The spec itself does not.
 
 ### `POST /api/calculate`
 

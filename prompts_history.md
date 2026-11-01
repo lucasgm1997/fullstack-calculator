@@ -8,3 +8,5 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 2. > we have de design system which I drew inspiration for from their website
 3. > i pressed esc unintentional, continue
 4. > follownig git flow, add commits
+5. > the project is running in 0.0.0.0 for me to test on my physical phone (and not only on mac)?
+6. > "can you add more info for the doc, example:  mermaid to ilustrate the user's calls and, backends steps, swagger?
