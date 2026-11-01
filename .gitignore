@@ -1,0 +1,15 @@
+# OS / editor
+.DS_Store
+
+# Env
+.env
+
+# Coverage
+backend/coverage.out
+backend/coverage.html
+
+# Playwright MCP scratch output
+.playwright-mcp/
+
+# Editor
+.vscode/
