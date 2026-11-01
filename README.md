@@ -10,6 +10,21 @@ A calculator with a **React + TypeScript + Vite** frontend and a **Go + Gin** RE
 - **CI:** GitHub Actions for formatting, lint, type check, tests with coverage, builds and the Docker build
 - **API docs:** an OpenAPI 3 spec with interactive **Swagger UI** at [`/api/docs`](#api-documentation-swagger--openapi), plus Mermaid diagrams in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 
+## Screenshots
+
+Running on a physical iPhone over the local network (`http://<mac-ip>:5173`). The calculation is done by the Go API.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/phone-basic.png" alt="Calculator in basic mode showing 1 + 1 = 2, with the API online indicator and the calculation in history" width="280"></td>
+    <td align="center"><img src="docs/screenshots/phone-advanced.png" alt="Calculator with the Advanced toggle on, showing the power, square root and percentage keys" width="280"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Basic mode</b>: result, expression and history</td>
+    <td align="center"><b>Advanced mode</b>: xʸ, √x and x% of y</td>
+  </tr>
+</table>
+
 ## Architecture at a glance
 
 The browser only calls its own origin. A proxy (Vite in development, nginx in Docker) forwards `/api/*` to the Go service, which processes the request as **Router → Handler → Use case → Domain**.

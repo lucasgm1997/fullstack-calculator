@@ -10,3 +10,4 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 4. > follownig git flow, add commits
 5. > the project is running in 0.0.0.0 for me to test on my physical phone (and not only on mac)?
 6. > "can you add more info for the doc, example:  mermaid to ilustrate the user's calls and, backends steps, swagger?
+7. > add the screenshots in readme.me
