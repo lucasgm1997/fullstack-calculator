@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
     server: {
+      // Listen on all interfaces (0.0.0.0) so phones on the same network can test the app.
+      host: true,
       // In development the browser calls the same origin (/api/...) and Vite
       // forwards the request to the Go API, so no CORS setup is needed.
       proxy: {
