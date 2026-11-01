@@ -39,25 +39,55 @@ function describe({ operation, a, b }: CalculateRequest): string {
   return unary ? `${symbol}${formatNumber(a)}` : `${formatNumber(a)} ${symbol} ${formatNumber(b ?? 0)}`
 }
 
+type Action = () => void | Promise<void>
+
 /**
  * ViewModel of the calculator: owns keypad input, pending operation, loading,
  * error, history and the last API call. Views only render this state and call
  * the returned actions.
+ *
+ * Actions run strictly in order. Input that arrives while a request is in
+ * flight (fast typing, paste, slow network) is queued and applied after the
+ * response, never dropped.
  */
 export function useCalculator() {
-  const [keypad, setKeypad] = useState<KeypadState>(INITIAL_KEYPAD)
+  // The keypad lives in a ref so queued actions always read the latest value;
+  // the state copy only triggers re-renders.
+  const keypadRef = useRef<KeypadState>(INITIAL_KEYPAD)
+  const [keypad, setKeypadState] = useState<KeypadState>(INITIAL_KEYPAD)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [history, setHistory] = useState<HistoryEntry[]>([])
   const [lastCall, setLastCall] = useState<ApiCall | null>(null)
-  // A ref (not state) so that two key presses within one render cannot both
-  // start a request.
   const busy = useRef(false)
+  const queue = useRef<Action[]>([])
   const nextHistoryId = useRef(1)
+
+  function setKeypad(next: KeypadState) {
+    keypadRef.current = next
+    setKeypadState(next)
+  }
+
+  /** Runs an action now, or queues it while an asynchronous one is in progress. */
+  function dispatch(action: Action): void | Promise<void> {
+    if (busy.current) {
+      queue.current.push(action)
+      return
+    }
+    const pending = action()
+    if (!pending) return
+
+    busy.current = true
+    return pending.finally(() => {
+      busy.current = false
+      while (!busy.current && queue.current.length > 0) {
+        void dispatch(queue.current.shift()!)
+      }
+    })
+  }
 
   /** Sends a request; resolves with the result, or null after showing the error. */
   async function run(request: CalculateRequest): Promise<number | null> {
-    busy.current = true
     setIsLoading(true)
     setError(null)
     try {
@@ -73,17 +103,16 @@ export function useCalculator() {
       setLastCall({ request, status: failure.status, response: failure.body })
       return null
     } finally {
-      busy.current = false
       setIsLoading(false)
     }
   }
 
-  /** Applies a synchronous keypad edit unless a request is in flight. */
-  function edit(update: (state: KeypadState) => KeypadState) {
-    if (busy.current) return
-    setError(null)
-    setKeypad(update)
-  }
+  /** Applies a synchronous keypad edit (in order with pending requests). */
+  const edit = (update: (state: KeypadState) => KeypadState) =>
+    dispatch(() => {
+      setError(null)
+      setKeypad(update(keypadRef.current))
+    })
 
   const inputDigit = (digit: string) =>
     edit((s) =>
@@ -105,31 +134,32 @@ export function useCalculator() {
 
   const clear = () => edit(() => INITIAL_KEYPAD)
 
-  async function chooseOperation(operation: Operation) {
-    if (busy.current) return
-    const value = Number(keypad.entry)
+  async function applyOperation(operation: Operation) {
+    const current = keypadRef.current
+    const value = Number(current.entry)
 
     if (OPERATIONS[operation].unary) {
       const result = await run({ operation, a: value })
       if (result === null) return
-      setKeypad((s) => ({
+      const s = keypadRef.current
+      setKeypad({
         ...s,
         entry: String(result),
         isEntryFresh: true,
         awaitingOperand: false,
         expression: s.pendingOperation ? s.expression : `${describe({ operation, a: value })} =`,
-      }))
+      })
       return
     }
 
     let accumulator = value
-    if (keypad.pendingOperation && keypad.accumulator !== null) {
-      if (keypad.awaitingOperand) {
+    if (current.pendingOperation && current.accumulator !== null) {
+      if (current.awaitingOperand) {
         // "5 + ×" just switches the operator.
-        accumulator = keypad.accumulator
+        accumulator = current.accumulator
       } else {
         // "2 + 3 ×" evaluates 2 + 3 first, then continues with ×.
-        const result = await run({ operation: keypad.pendingOperation, a: keypad.accumulator, b: value })
+        const result = await run({ operation: current.pendingOperation, a: current.accumulator, b: value })
         if (result === null) return
         accumulator = result
       }
@@ -147,9 +177,8 @@ export function useCalculator() {
     })
   }
 
-  async function evaluate() {
-    if (busy.current) return
-    const { pendingOperation, accumulator, awaitingOperand, entry } = keypad
+  async function applyEquals() {
+    const { pendingOperation, accumulator, awaitingOperand, entry } = keypadRef.current
     if (!pendingOperation || accumulator === null) return
     if (awaitingOperand) {
       setError('Enter a second number')
@@ -162,6 +191,8 @@ export function useCalculator() {
     setKeypad({ ...INITIAL_KEYPAD, entry: String(result), expression: `${describe(request)} =` })
   }
 
+  const chooseOperation = (operation: Operation) => dispatch(() => applyOperation(operation))
+  const evaluate = () => dispatch(applyEquals)
   const clearHistory = () => setHistory([])
 
   return {

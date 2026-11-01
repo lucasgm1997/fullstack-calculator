@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { server } from '../../../tests/mocks/server'
@@ -72,6 +72,40 @@ describe('useCalculator', () => {
     type('4')
     await act(() => result.current.evaluate())
     expect(result.current.display).toBe('20')
+  })
+
+  it('queues input typed while a request is in flight instead of dropping it', async () => {
+    let release!: () => void
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    server.use(
+      http.post('/api/calculate', async ({ request }) => {
+        const { operation, a, b } = (await request.clone().json()) as { operation: string; a: number; b: number }
+        if (operation === 'add') await gate // hold the chained "2 + 3" request open
+        return HttpResponse.json({ result: operation === 'add' ? a + b : a * b })
+      }),
+    )
+    const { result, type } = setup()
+    type('2')
+    await act(() => result.current.chooseOperation('add'))
+    type('3')
+
+    // Fast typing: "×", "4", "=" all arrive before the API answers 2 + 3.
+    let chained: void | Promise<void>
+    act(() => {
+      chained = result.current.chooseOperation('multiply')
+      result.current.inputDigit('4')
+      result.current.evaluate()
+    })
+    expect(result.current.isLoading).toBe(true)
+
+    await act(async () => {
+      release()
+      await chained
+    })
+
+    await waitFor(() => expect(result.current.display).toBe('20'))
+    expect(result.current.expression).toBe('5 × 4 =')
+    expect(result.current.error).toBeNull()
   })
 
   it('switches the operator when no second operand was typed', async () => {
