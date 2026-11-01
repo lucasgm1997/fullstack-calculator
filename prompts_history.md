@@ -18,3 +18,5 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 12. > in which cloud provider i can deploy this project for prod? oracle provider? needs to be free tier
 13. > and about vercel?
 14. > (pasted link) https://www.oracle.com/cloud/sign-in.html (tracking parameters removed)
+15. > instale https://github.com/oracle/oci-cli
+16. > first of all, upload the repo to github
