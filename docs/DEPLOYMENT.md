@@ -34,6 +34,8 @@ Only Caddy is exposed. The frontend and backend are reachable only on the intern
 | Networking | default VCN, public subnet, **Assign a public IPv4 address** ✅ |
 | SSH keys | *Generate a key pair* and **download the private key**, or paste your own public key |
 
+> **No ARM capacity? Use the free AMD micro VM.** Choose **Specialty and previous generation → VM.Standard.E2.1.Micro** (1/8 OCPU, 1 GB RAM, Always Free, usually available) with the regular *Canonical Ubuntu 24.04* image. 1 GB is too little to build the Docker images on the VM, so `setup.sh` detects it, adds a 2 GB swap file, and **pulls prebuilt images** that CI publishes to GitHub Container Registry (amd64 + arm64). This is how the live demo runs.
+
 > **"Out of capacity for shape VM.Standard.A1.Flex"** is common. Try another availability domain, try 1 OCPU / 6 GB, or try again later. Upgrading the account to *Pay As You Go* usually solves it, and you are still not charged while you stay within Always Free limits. It also stops Oracle from reclaiming idle free instances.
 
 Copy the instance's **public IP** when it is running.
@@ -92,6 +94,17 @@ Let's Encrypt needs a domain name, not a bare IP.
 | Status | `sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml ps` |
 | Logs | `sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml logs -f` |
 | Stop | `sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml down` |
+
+## Prebuilt images (small VMs)
+
+On every push to `main` and every `v*` tag, after all tests and E2E pass, CI publishes multi-arch images:
+
+- `ghcr.io/lucasgm1997/fullstack-calculator-backend` with tags `latest`, `<version>` and `sha-<commit>`
+- `ghcr.io/lucasgm1997/fullstack-calculator-frontend` with the same tags
+
+`setup.sh` uses them automatically when the VM has less than 2 GB of RAM. To force a mode, set `USE_PREBUILT_IMAGES=true` or `false`. To pin a version instead of `latest`, add `BACKEND_IMAGE=ghcr.io/...-backend:1.1.0` and the matching `FRONTEND_IMAGE` to `~/calculator/.env`.
+
+The packages must be **public**, so the VM can pull without credentials. Check this in GitHub → your profile → *Packages* → package → *Package settings* → *Change visibility*.
 
 ## Tuning the rate limit
 

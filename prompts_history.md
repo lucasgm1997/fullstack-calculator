@@ -23,3 +23,8 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 17. > let's try to deploy, install oracle cli
 18. > i am on
 19. > let's implement rate limiting, restricting it to a small number of test calls to prevent attacks such as DDoS.
+20. > what's the deploy for oracle status?
+21. > can't we change the region to one that is more readily avaiable?
+22. > what are the machine options? i think we can do that, this is not a real project
+23. > does it make sense to add terraform to the proejct to manage infra as code and have traceability?
+24. > yes
