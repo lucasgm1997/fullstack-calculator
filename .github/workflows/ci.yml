@@ -21,6 +21,8 @@ jobs:
       - name: Check formatting
         run: test -z "$(gofmt -l .)"
       - run: go vet ./...
+      - name: Lint OpenAPI spec
+        run: npx --yes @redocly/cli@2 lint internal/docs/openapi.yaml
       - name: Test with coverage
         run: |
           go test -race -coverpkg=./internal/... -coverprofile=coverage.out ./...
