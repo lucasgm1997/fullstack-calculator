@@ -9,6 +9,9 @@ info:
     - Every response body is JSON.
     - Errors always have the shape `{"error": "<message>"}`.
     - Arithmetic errors (e.g. division by zero) are client errors and return **400**.
+    - Every endpoint except `/api/health` is **rate limited per client IP**
+      (default 20 requests per minute, configurable). Over the limit the API
+      answers **429** with a `Retry-After` header.
 servers:
   - url: /
     description: Same origin (direct, or through the Vite / nginx proxy)
@@ -72,6 +75,11 @@ paths:
       responses:
         '200':
           description: Calculation succeeded.
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
           content:
             application/json:
               schema:
@@ -104,6 +112,8 @@ paths:
                   value: { error: request body too large }
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
         '500':
           description: Unexpected error. Details are logged, never returned.
           content:
@@ -167,7 +177,35 @@ components:
         status:
           type: string
           enum: [ok]
+  headers:
+    X-RateLimit-Limit:
+      description: Requests allowed per client per window.
+      schema:
+        type: integer
+        example: 20
+    X-RateLimit-Remaining:
+      description: Requests left in the current budget.
+      schema:
+        type: integer
+        example: 19
   responses:
+    TooManyRequests:
+      description: Rate limit exceeded for this client IP.
+      headers:
+        Retry-After:
+          description: Seconds until the next request is allowed.
+          schema:
+            type: integer
+            example: 3
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example: { error: 'too many requests, try again in 3 seconds' }
     MethodNotAllowed:
       description: Wrong HTTP method for this path.
       content:
