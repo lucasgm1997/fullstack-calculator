@@ -2,6 +2,50 @@
 
 A calculator with a **React + TypeScript + Vite** frontend and a **Go + Gin** REST API. The frontend does no arithmetic: every calculation is sent to the backend.
 
+**Live demo:** http://144.22.152.43 · **Swagger UI:** http://144.22.152.43/api/docs
+
+## Implementation checklist
+
+### Required by the assignment
+
+- [x] **React frontend in TypeScript** (Vite) → [`frontend/`](frontend/)
+- [x] **Go backend microservice** (Gin) exposing REST endpoints → [`backend/`](backend/), [API](#api)
+- [x] **Addition, subtraction, multiplication and division**, computed by the backend
+- [x] **Intuitive UI** for entering input and displaying results → [Screenshots](#screenshots)
+- [x] **Input validation and error handling in the UI**: one decimal point, 15-digit limit, "Enter a second number", API errors shown in red
+- [x] **Responsive design** with basic mobile support, tested on a physical iPhone and a Pixel 7 viewport
+- [x] **Backend validates input and handles edge cases**: division by zero, malformed JSON, wrong types, missing operands, unsupported operations, overflow → [Error table](#post-apicalculate)
+- [x] **Results returned as JSON**
+- [x] **Clean, readable, idiomatic code** in both layers → [Design decisions](#design-decisions)
+- [x] **Unit tests for key functionality** in the frontend (Vitest) and the backend (Go `testing`)
+- [x] **Coverage report**: backend 100% of statements in `internal/`, frontend 96% of statements → [Tests and coverage](#tests-and-coverage)
+- [x] **README** with setup, how to run the frontend and backend, API examples, and design decisions or assumptions → [Running locally](#running-locally), [Examples](#examples), [Assumptions](#assumptions-and-known-limitations)
+- [x] **Git repository** with frontend and backend code
+- [x] **AI prompts shared** → [`prompts_history.md`](prompts_history.md)
+
+### Optional in the assignment
+
+- [x] **Exponentiation, square root and percentage** (Advanced mode)
+- [x] **Dockerfile for full-stack deployment**: multi-stage Dockerfiles and Docker Compose → [Running with Docker](#running-with-docker)
+
+### Extras beyond the assignment
+
+- [x] **Live deployment** on an Oracle Cloud Always Free VM, with Caddy in front → [Deploying](#deploying-oracle-cloud-always-free), [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+- [x] **Rate limiting** per client IP (`429` with `Retry-After`), resistant to spoofed `X-Forwarded-For` headers → [Rate limiting](#rate-limiting)
+- [x] **Integration tests**: Go `httptest` through the real router, and React Testing Library + MSW for the frontend
+- [x] **E2E tests** with Playwright against the real React app and Go API, desktop and mobile
+- [x] **CI** with GitHub Actions: lint, type check, tests with coverage, E2E, the OpenAPI lint and the Docker build
+- [x] **Multi-arch images** (amd64 and arm64) published to GitHub Container Registry after tests pass
+- [x] **OpenAPI 3 spec with Swagger UI**, plus a contract test against the code → [API documentation](#api-documentation-swagger--openapi)
+- [x] **Architecture docs** with Mermaid diagrams → [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- [x] **Layered architecture**: Clean Architecture-inspired backend (router → handler → use case → domain) and MVVM-inspired frontend
+- [x] **Accessibility and keyboard support**: real buttons with accessible names, live result region, `role="alert"` errors, full keyboard input
+- [x] **Design system** inspired by Sezzle (Tailwind v4 tokens) → [`design-system/`](design-system/DESIGN.md)
+- [x] **API status indicator, "Last API call" inspector and calculation history** in the UI
+- [x] **Git flow**: `feature/*` and `release/*` branches, tagged releases `v1.0.0` and `v1.1.0`
+
+## Highlights
+
 - **Operations:** add, subtract, multiply, divide, plus optional power, square root and percentage
 - **Validation and errors:** malformed JSON, wrong types, missing operands, unsupported operations, division by zero, square root of a negative number, overflow
 - **Rate limiting:** per client IP (default 20 requests/minute), returning `429` with `Retry-After`, and resistant to spoofed `X-Forwarded-For` headers
