@@ -283,6 +283,8 @@ stateDiagram-v2
     ShowingResult --> Idle: AC
 ```
 
+Keys pressed during **Loading** are not dropped. They are queued and replayed in order once the response arrives, so typing `2+3*4⏎` at full speed still gives `20`. This is covered by an E2E test and a unit regression test.
+
 ## 8. Chained operations
 
 The calculator evaluates **left to right as you type**, like a pocket calculator, and always delegates the math to the API.

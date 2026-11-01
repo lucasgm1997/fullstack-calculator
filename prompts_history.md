@@ -11,3 +11,5 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 5. > the project is running in 0.0.0.0 for me to test on my physical phone (and not only on mac)?
 6. > "can you add more info for the doc, example:  mermaid to ilustrate the user's calls and, backends steps, swagger?
 7. > add the screenshots in readme.me
+8. > and about integrations and e2e tests, we have?
+9. > let's add e2e test on frontend using playwright
