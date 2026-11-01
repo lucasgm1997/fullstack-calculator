@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculator Sketch</title>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<style>/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-font-weight:initial;--tw-duration:initial;--tw-ease:initial;--tw-outline-style:solid;--tw-border-style:solid;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-space-y-reverse:0;--tw-leading:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial}}}@layer theme{:root,:host{--font-sans:"Satoshi", -apple-system, system-ui, "Segoe UI", sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--container-md:28rem;--text-sm:.875rem;--text-sm--line-height:1.3;--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--font-weight-medium:500;--font-weight-semibold:600;--leading-tight:1.25;--radius-xs:5px;--radius-lg:12px;--radius-xl:16px;--radius-2xl:20px;--blur-2xl:40px;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-bg:#201733;--color-bg-deep:#1f1530;--color-surface:#241b3b;--color-surface-2:#2c2247;--color-overlay:#f2e6ff1a;--color-fg:#f2e6ff;--color-fg-strong:#fff;--color-fg-muted:#f2e6ffb3;--color-fg-subtle:#f2e6ff99;--color-line:#f2e6ff1f;--color-line-faint:#ffffff0f;--color-brand-300:#bb6ad3;--color-brand-400:#8e3df2;--color-brand-500:#8333d4;--color-mint:#9ff4d9;--color-mint-strong:#5eead4;--color-mint-fg:#201733;--color-danger:#ff5667;--text-display:3.1667rem;--text-display--line-height:1.08;--text-display--letter-spacing:-.025em;--text-display--font-weight:500;--text-lead:1.3334rem;--text-lead--line-height:1.3;--text-lead--font-weight:600;--text-body:1rem;--text-body--line-height:1.35;--text-caption:.8125rem;--text-caption--line-height:1.3;--text-label:.8125rem;--text-label--line-height:1.54;--text-label--letter-spacing:.02em;--text-label--font-weight:600;--radius-pill:100px;--gradient-hero-glow:radial-gradient(60% 58%, #bb6ad3 0%, #7a3fb8 45%, transparent 72%);--ease-standard:cubic-bezier(.2, 0, 0, 1);--duration-fast:.12s;--duration-base:.2s}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}html{background:var(--color-bg);color:var(--color-fg);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}}@layer components;@layer utilities{.btn-ghost{height:calc(var(--spacing) * 11);justify-content:center;align-items:center;gap:calc(var(--spacing) * 2);border-radius:var(--radius-pill);padding-inline:calc(var(--spacing) * 5);font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height));--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium);transition-property:background-color,transform,opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration));--tw-duration:var(--duration-base);transition-duration:var(--duration-base);--tw-ease:var(--ease-standard);transition-timing-function:var(--ease-standard);display:inline-flex}.btn-ghost:focus-visible{outline-style:var(--tw-outline-style);outline-offset:2px;outline-width:2px;outline-color:var(--color-mint)}.btn-ghost:active{scale:.98}.btn-ghost:disabled{pointer-events:none;opacity:.4}.btn-ghost{border-style:var(--tw-border-style);border-width:1px;border-color:var(--color-fg);color:var(--color-fg)}@media (hover:hover){.btn-ghost:hover{background-color:var(--color-overlay)}}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.relative{position:relative}.inset-x-0{inset-inline:0}.top-\[-20\%\]{top:-20%}.bottom-0{bottom:0}.col-span-2{grid-column:span 2/span 2}.mx-auto{margin-inline:auto}.mt-3{margin-top:calc(var(--spacing) * 3)}.key{height:calc(var(--spacing) * 16);border-radius:var(--radius-2xl);background-color:var(--color-surface);--tw-font-weight:var(--font-weight-medium);font-size:1.6rem;font-weight:var(--font-weight-medium);color:var(--color-fg-strong);transition-property:background-color,transform;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration));--tw-duration:var(--duration-fast);transition-duration:var(--duration-fast);justify-content:center;align-items:center;display:flex}@media (hover:hover){.key:hover{background-color:var(--color-surface-2)}}.key:focus-visible{outline-style:var(--tw-outline-style);outline-width:2px;outline-color:var(--color-mint)}.key:active{--tw-scale-x:95%;--tw-scale-y:95%;--tw-scale-z:95%;scale:var(--tw-scale-x) var(--tw-scale-y)}.flex{display:flex}.grid{display:grid}.hidden{display:none}.input{height:calc(var(--spacing) * 12);border-radius:var(--radius-lg);border-style:var(--tw-border-style);border-width:1px;border-color:var(--color-line);background-color:var(--color-surface);width:100%;padding-inline:calc(var(--spacing) * 4);font-size:var(--text-body);line-height:var(--tw-leading,var(--text-body--line-height));color:var(--color-fg);--tw-outline-style:none;outline-style:none}.input::placeholder{color:var(--color-fg-subtle)}.input:focus{border-color:var(--color-brand-400);--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);--tw-ring-color:#8e3df24d}@supports (color:color-mix(in lab, red, red)){.input:focus{--tw-ring-color:color-mix(in oklab, var(--color-brand-400) 30%, transparent)}}.size-2{width:calc(var(--spacing) * 2);height:calc(var(--spacing) * 2)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.h-9{height:calc(var(--spacing) * 9)}.h-\[70vh\]{height:70vh}.min-h-6{min-height:calc(var(--spacing) * 6)}.min-h-40{min-height:calc(var(--spacing) * 40)}.min-h-dvh{min-height:100dvh}.w-full{width:100%}.max-w-md{max-width:var(--container-md)}.cursor-pointer{cursor:pointer}.list-none{list-style-type:none}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.flex-col{flex-direction:column}.place-items-center{place-items:center}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-end{justify-content:flex-end}.justify-start{justify-content:flex-start}.gap-0\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-x-auto{overflow-x:auto}.card{border-radius:var(--radius-2xl);border-style:var(--tw-border-style);border-width:1px;border-color:var(--color-line);background-color:var(--color-surface);--tw-shadow:0 10px 28px 0 var(--tw-shadow-color,#00000059);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-pill{border-radius:var(--radius-pill)}.rounded-xl{border-radius:var(--radius-xl)}.rounded-xs{border-radius:var(--radius-xs)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-dashed{--tw-border-style:dashed;border-style:dashed}.border-danger{border-color:var(--color-danger)}.border-line{border-color:var(--color-line)}.border-line-faint{border-color:var(--color-line-faint)}.key-fn{background-color:var(--color-overlay);color:var(--color-fg)}@media (hover:hover){.key-fn:hover{background-color:var(--color-surface-2)}}.key-op{background-color:var(--color-brand-500);color:var(--color-white)}@media (hover:hover){.key-op:hover{background-color:var(--color-brand-400)}}.bg-bg{background-color:var(--color-bg)}.bg-bg-deep{background-color:var(--color-bg-deep)}.bg-bg-deep\/95{background-color:#1f1530f2}@supports (color:color-mix(in lab, red, red)){.bg-bg-deep\/95{background-color:color-mix(in oklab, var(--color-bg-deep) 95%, transparent)}}.bg-brand-500{background-color:var(--color-brand-500)}.bg-danger\/15{background-color:#ff566726}@supports (color:color-mix(in lab, red, red)){.bg-danger\/15{background-color:color-mix(in oklab, var(--color-danger) 15%, transparent)}}.bg-mint{background-color:var(--color-mint)}.bg-mint\/15{background-color:#9ff4d926}@supports (color:color-mix(in lab, red, red)){.bg-mint\/15{background-color:color-mix(in oklab, var(--color-mint) 15%, transparent)}}.bg-surface{background-color:var(--color-surface)}.bg-\(image\:--gradient-hero-glow\){background-image:var(--gradient-hero-glow)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.px-1\.5{padding-inline:calc(var(--spacing) * 1.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-3{padding-block:calc(var(--spacing) * 3)}.pt-6{padding-top:calc(var(--spacing) * 6)}.pr-4{padding-right:calc(var(--spacing) * 4)}.pb-24{padding-bottom:calc(var(--spacing) * 24)}.pl-1\.5{padding-left:calc(var(--spacing) * 1.5)}.pl-7{padding-left:calc(var(--spacing) * 7)}.text-center{text-align:center}.text-right{text-align:right}.font-sans{font-family:var(--font-sans)}.text-display{font-size:var(--text-display);line-height:var(--tw-leading,var(--text-display--line-height));letter-spacing:var(--tw-tracking,var(--text-display--letter-spacing));font-weight:var(--tw-font-weight,var(--text-display--font-weight))}.text-label{font-size:var(--text-label);line-height:var(--tw-leading,var(--text-label--line-height));letter-spacing:var(--tw-tracking,var(--text-label--letter-spacing));font-weight:var(--tw-font-weight,var(--text-label--font-weight))}.text-lead{font-size:var(--text-lead);line-height:var(--tw-leading,var(--text-lead--line-height));font-weight:var(--tw-font-weight,var(--text-lead--font-weight))}.text-body{font-size:var(--text-body);line-height:var(--tw-leading,var(--text-body--line-height))}.text-caption{font-size:var(--text-caption);line-height:var(--tw-leading,var(--text-caption--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-\[11px\]{font-size:11px}.leading-tight{--tw-leading:var(--leading-tight);line-height:var(--leading-tight)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-brand-300{color:var(--color-brand-300)}.text-danger{color:var(--color-danger)}.text-fg{color:var(--color-fg)}.text-fg-muted{color:var(--color-fg-muted)}.text-fg-strong{color:var(--color-fg-strong)}.text-fg-subtle{color:var(--color-fg-subtle)}.text-mint{color:var(--color-mint)}.text-mint-fg{color:var(--color-mint-fg)}.text-white{color:var(--color-white)}.uppercase{text-transform:uppercase}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.opacity-30{opacity:.3}.opacity-60{opacity:.6}.ring-2{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-brand-400{--tw-ring-color:var(--color-brand-400)}.blur-2xl{--tw-blur:blur(var(--blur-2xl));filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.group-open\:rotate-180:is(:where(.group):is([open],:popover-open,:open) *){rotate:180deg}@media (hover:hover){.hover\:bg-mint-strong:hover{background-color:var(--color-mint-strong)}.hover\:text-fg:hover{color:var(--color-fg)}}}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}</style>
+</head>
+<body class="min-h-dvh bg-bg text-fg font-sans">
+  <!-- glow -->
+  <div aria-hidden="true" class="pointer-events-none fixed inset-x-0 top-[-20%] h-[70vh] bg-(image:--gradient-hero-glow) opacity-30 blur-2xl"></div>
+
+  <main class="relative mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-4 pt-6 pb-24">
+    <!-- Header -->
+    <header class="flex items-center justify-between">
+      <div class="flex items-center gap-3 rounded-pill bg-surface py-1.5 pr-4 pl-1.5">
+        <span class="grid size-9 place-items-center rounded-full bg-brand-500 font-medium text-white">C</span>
+        <div class="leading-tight">
+          <p class="text-sm font-medium text-fg-strong">Calculator</p>
+          <p class="flex items-center gap-1 text-caption text-fg-muted">
+            <span id="api-dot" class="size-2 rounded-full bg-mint"></span>
+            <span id="api-status">API online</span>
+          </p>
+        </div>
+      </div>
+      <button id="mode-toggle" class="btn-ghost h-9 px-4 text-caption" aria-pressed="false">Advanced</button>
+    </header>
+
+    <!-- Display -->
+    <section id="display" class="card flex min-h-40 flex-col justify-end gap-1 p-5 text-right transition-colors" aria-live="polite">
+      <p id="expr" class="min-h-6 truncate text-body text-fg-muted tabular-nums">&nbsp;</p>
+      <p id="result" class="truncate text-display text-fg-strong tabular-nums">0</p>
+      <p id="error" class="hidden text-sm font-medium text-danger"></p>
+    </section>
+
+    <!-- Advanced row -->
+    <div id="advanced" class="hidden grid-cols-3 gap-3">
+      <button data-op="power" class="key key-op">x<sup>y</sup></button>
+      <button data-op="sqrt"  class="key key-op">√x</button>
+      <button data-op="percentage" class="key key-op">x% of y</button>
+    </div>
+
+    <!-- Keypad -->
+    <div class="grid grid-cols-4 gap-3" id="keypad">
+      <button data-action="clear"  class="key key-fn">AC</button>
+      <button data-action="back"   class="key key-fn" aria-label="Backspace">⌫</button>
+      <button data-action="sign"   class="key key-fn">±</button>
+      <button data-op="divide"     class="key key-op">÷</button>
+
+      <button data-digit="7" class="key">7</button>
+      <button data-digit="8" class="key">8</button>
+      <button data-digit="9" class="key">9</button>
+      <button data-op="multiply" class="key key-op">×</button>
+
+      <button data-digit="4" class="key">4</button>
+      <button data-digit="5" class="key">5</button>
+      <button data-digit="6" class="key">6</button>
+      <button data-op="subtract" class="key key-op">−</button>
+
+      <button data-digit="1" class="key">1</button>
+      <button data-digit="2" class="key">2</button>
+      <button data-digit="3" class="key">3</button>
+      <button data-op="add" class="key key-op">+</button>
+
+      <button data-digit="0" class="key col-span-2 justify-start pl-7">0</button>
+      <button data-digit="." class="key">.</button>
+      <button data-action="equals" id="equals" class="key bg-mint text-mint-fg hover:bg-mint-strong">=</button>
+    </div>
+
+    <!-- API inspector -->
+    <details class="card group p-4" open>
+      <summary class="flex cursor-pointer list-none items-center justify-between text-label text-fg-muted uppercase">
+        Last API call
+        <span class="text-fg-subtle transition-transform group-open:rotate-180">⌄</span>
+      </summary>
+      <div class="mt-3 space-y-2">
+        <p class="text-caption text-fg-subtle">Request</p>
+        <pre id="req" class="overflow-x-auto rounded-lg bg-bg-deep p-3 text-caption text-fg">—</pre>
+        <p class="flex items-center gap-2 text-caption text-fg-subtle">Response <span id="status-badge" class="hidden rounded-xs px-1.5 py-0.5 text-[11px] font-semibold"></span></p>
+        <pre id="res" class="overflow-x-auto rounded-lg bg-bg-deep p-3 text-caption text-fg">—</pre>
+      </div>
+    </details>
+
+    <!-- History -->
+    <section class="space-y-2">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lead text-fg-strong">History</h2>
+        <button id="clear-history" class="text-sm text-fg-muted hover:text-fg">Clear</button>
+      </div>
+      <ul id="history" class="space-y-2">
+        <li class="rounded-xl border border-dashed border-line p-4 text-center text-sm text-fg-subtle">No calculations yet</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Bottom nav (app feel) -->
+  <nav class="fixed inset-x-0 bottom-0 border-t border-line-faint bg-bg-deep/95 backdrop-blur">
+    <ul class="mx-auto grid max-w-md grid-cols-3 py-2 text-caption">
+      <li class="flex flex-col items-center gap-0.5 text-brand-300"><span class="text-xl">▦</span>Calculator</li>
+      <li class="flex flex-col items-center gap-0.5 text-fg-muted"><span class="text-xl">↺</span>History</li>
+      <li class="flex flex-col items-center gap-0.5 text-fg-muted"><span class="text-xl">{ }</span>API</li>
+    </ul>
+  </nav>
+
+  <!-- hidden: force-generate state classes -->
+  <div class="hidden border-danger bg-danger/15 text-danger bg-mint/15 text-mint opacity-60 ring-2 ring-brand-400 grid"></div>
+
+<script>
+// ---------- Mock of the Go REST API: POST /api/v1/calculate ----------
+const OPS = {
+  add:        { sym: '+',  arity: 2, fn: (a, b) => a + b },
+  subtract:   { sym: '−',  arity: 2, fn: (a, b) => a - b },
+  multiply:   { sym: '×',  arity: 2, fn: (a, b) => a * b },
+  divide:     { sym: '÷',  arity: 2, fn: (a, b) => a / b },
+  power:      { sym: '^',  arity: 2, fn: (a, b) => a ** b },
+  sqrt:       { sym: '√',  arity: 1, fn: (a) => Math.sqrt(a) },
+  percentage: { sym: '% of', arity: 2, fn: (a, b) => (a / 100) * b },
+};
+
+async function mockApi(body) {
+  await new Promise(r => setTimeout(r, 250));
+  const err = (status, code, message) => ({ status, json: { error: { code, message } } });
+  const op = OPS[body.operation];
+  if (!op) return err(400, 'INVALID_OPERATION', `unsupported operation "${body.operation}"`);
+  if (typeof body.a !== 'number' || !Number.isFinite(body.a)) return err(400, 'INVALID_INPUT', 'field "a" must be a finite number');
+  if (op.arity === 2 && (typeof body.b !== 'number' || !Number.isFinite(body.b))) return err(400, 'INVALID_INPUT', 'field "b" must be a finite number');
+  if (body.operation === 'divide' && body.b === 0) return err(422, 'DIVISION_BY_ZERO', 'division by zero is not allowed');
+  if (body.operation === 'sqrt' && body.a < 0) return err(422, 'NEGATIVE_SQRT', 'square root of a negative number is not allowed');
+  const result = op.fn(body.a, body.b);
+  if (!Number.isFinite(result)) return err(422, 'OVERFLOW', 'result is out of range');
+  return { status: 200, json: { operation: body.operation, a: body.a, ...(op.arity === 2 && { b: body.b }), result } };
+}
+
+// ---------- UI state ----------
+const $ = id => document.getElementById(id);
+const state = { a: null, op: null, input: '0', fresh: true, loading: false, history: [] };
+const fmt = n => Number.isInteger(n) ? n.toLocaleString('en-US') : Number(n.toPrecision(12)).toLocaleString('en-US', { maximumFractionDigits: 10 });
+
+function setError(msg) {
+  $('error').textContent = msg || '';
+  $('error').classList.toggle('hidden', !msg);
+  $('display').classList.toggle('border-danger', !!msg);
+}
+
+function render() {
+  const op = state.op && OPS[state.op];
+  $('expr').innerHTML = op ? `${fmt(state.a)} ${op.sym}` : '&nbsp;';
+  $('result').textContent = state.input === '-' ? '-' : (state.input.endsWith('.') ? state.input : fmt(Number(state.input)));
+  document.querySelectorAll('[data-op]').forEach(b =>
+    b.classList.toggle('ring-2', b.dataset.op === state.op));
+  document.querySelectorAll('[data-op]').forEach(b => b.classList.toggle('ring-brand-400', b.dataset.op === state.op));
+}
+
+function digit(d) {
+  setError();
+  if (state.fresh) { state.input = d === '.' ? '0.' : d; state.fresh = false; }
+  else if (d === '.' && state.input.includes('.')) return;              // validation: one decimal point
+  else if (state.input.replace(/[-.]/g, '').length >= 12) return;       // validation: max 12 digits
+  else state.input = state.input === '0' && d !== '.' ? d : state.input + d;
+  render();
+}
+
+async function call(operation, a, b) {
+  const body = { operation, a, ...(b !== undefined && { b }) };
+  $('req').textContent = `POST /api/v1/calculate\n${JSON.stringify(body, null, 2)}`;
+  state.loading = true; $('equals').classList.add('opacity-60'); $('equals').textContent = '…';
+  const { status, json } = await mockApi(body);
+  state.loading = false; $('equals').classList.remove('opacity-60'); $('equals').textContent = '=';
+  $('res').textContent = JSON.stringify(json, null, 2);
+  const badge = $('status-badge');
+  badge.textContent = status; badge.classList.remove('hidden');
+  badge.className = `rounded-xs px-1.5 py-0.5 text-[11px] font-semibold ${status === 200 ? 'bg-mint/15 text-mint' : 'bg-danger/15 text-danger'}`;
+  if (status !== 200) { setError(json.error.message); return null; }
+  const op = OPS[operation];
+  addHistory(op.arity === 2 ? `${fmt(a)} ${op.sym} ${fmt(b)}` : `√${fmt(a)}`, json.result);
+  return json.result;
+}
+
+async function chooseOp(op) {
+  if (state.loading) return;
+  setError();
+  const current = Number(state.input);
+  if (OPS[op].arity === 1) {
+    const r = await call(op, current);
+    if (r !== null) { state.input = String(r); state.fresh = true; state.op = null; }
+    return render();
+  }
+  if (state.op && !state.fresh) {                     // chain: 2 + 3 × → compute 2+3 first
+    const r = await call(state.op, state.a, current);
+    if (r === null) return render();
+    state.a = r; state.input = String(r);
+  } else state.a = current;
+  state.op = op; state.fresh = true;
+  render();
+}
+
+async function equals() {
+  if (state.loading || !state.op) return;
+  if (state.fresh) { setError('Enter a second number'); return; }  // validation
+  const r = await call(state.op, state.a, Number(state.input));
+  if (r !== null) { state.input = String(r); state.op = null; state.a = null; state.fresh = true; }
+  render();
+}
+
+function addHistory(expr, result) {
+  state.history.unshift({ expr, result });
+  $('history').innerHTML = state.history.slice(0, 6).map(h => `
+    <li class="flex items-center justify-between rounded-xl bg-surface px-4 py-3">
+      <span class="text-sm text-fg-muted tabular-nums">${h.expr}</span>
+      <span class="font-medium text-fg-strong tabular-nums">= ${fmt(h.result)}</span>
+    </li>`).join('');
+}
+
+// ---------- Events ----------
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.digit) digit(b.dataset.digit);
+  else if (b.dataset.op) chooseOp(b.dataset.op);
+  else if (b.dataset.action === 'equals') equals();
+  else if (b.dataset.action === 'clear') { Object.assign(state, { a: null, op: null, input: '0', fresh: true }); setError(); render(); }
+  else if (b.dataset.action === 'back') { state.input = state.input.length > 1 ? state.input.slice(0, -1) : '0'; render(); }
+  else if (b.dataset.action === 'sign') { state.input = state.input.startsWith('-') ? state.input.slice(1) : (state.input === '0' ? '0' : '-' + state.input); render(); }
+});
+$('mode-toggle').addEventListener('click', e => {
+  const on = $('advanced').classList.toggle('hidden') === false;
+  $('advanced').classList.toggle('grid', on);
+  e.currentTarget.setAttribute('aria-pressed', on);
+  e.currentTarget.textContent = on ? 'Basic' : 'Advanced';
+});
+$('clear-history').addEventListener('click', () => { state.history = []; $('history').innerHTML = '<li class="rounded-xl border border-dashed border-line p-4 text-center text-sm text-fg-subtle">No calculations yet</li>'; });
+document.addEventListener('keydown', e => {
+  const map = { '+': 'add', '-': 'subtract', '*': 'multiply', '/': 'divide', '^': 'power' };
+  if (/^[0-9.]$/.test(e.key)) digit(e.key);
+  else if (map[e.key]) chooseOp(map[e.key]);
+  else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); equals(); }
+  else if (e.key === 'Backspace') document.querySelector('[data-action=back]').click();
+  else if (e.key === 'Escape') document.querySelector('[data-action=clear]').click();
+});
+render();
+</script>
+</body>
+</html>
