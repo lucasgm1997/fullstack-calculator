@@ -28,7 +28,7 @@ export default defineConfig({
     {
       command: 'go run ./cmd/api',
       cwd: '../backend',
-      env: { PORT: String(API_PORT), GIN_MODE: 'release' },
+      env: { PORT: String(API_PORT), GIN_MODE: 'release', RATE_LIMIT_REQUESTS: '10000' },
       url: `http://localhost:${API_PORT}/api/health`,
       reuseExistingServer: false,
       timeout: 120_000,

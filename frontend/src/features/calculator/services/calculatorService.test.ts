@@ -24,6 +24,20 @@ describe('calculate', () => {
     expect(error).toMatchObject({ message: 'Division by zero', status: 400, body: { error: 'division by zero' } })
   })
 
+  it('explains rate limiting (429) with the wait time from the API', async () => {
+    server.use(
+      http.post('/api/calculate', () =>
+        HttpResponse.json(
+          { error: 'too many requests, try again in 12 seconds' },
+          { status: 429, headers: { 'Retry-After': '12' } },
+        ),
+      ),
+    )
+
+    const error = await calculate({ operation: 'add', a: 1, b: 1 }).catch((e: unknown) => e)
+    expect(error).toMatchObject({ message: 'Too many requests, try again in 12 seconds', status: 429 })
+  })
+
   it('uses a generic message for 4xx responses without an error body', async () => {
     server.use(http.post('/api/calculate', () => new HttpResponse('nope', { status: 422 })))
 
