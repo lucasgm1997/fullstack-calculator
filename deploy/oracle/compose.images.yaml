@@ -1,0 +1,16 @@
+# Use prebuilt images from GitHub Container Registry instead of building on the VM.
+# Needed on small machines (e.g. Always Free E2.1.Micro, 1 GB RAM) where the Go
+# and npm builds would run out of memory. CI publishes these images (amd64 + arm64).
+#
+#   docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml \
+#                  -f deploy/oracle/compose.images.yaml pull
+#   docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml \
+#                  -f deploy/oracle/compose.images.yaml up -d
+services:
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/lucasgm1997/fullstack-calculator-backend:latest}
+    build: !reset null
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/lucasgm1997/fullstack-calculator-frontend:latest}
+    build: !reset null
