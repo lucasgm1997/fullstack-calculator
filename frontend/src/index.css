@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+/* Shared design system (Sezzle-inspired tokens + btn/card/input utilities). */
+@import '../../design-system/tokens.css';
+
+/* Keypad keys, as in design-system/calculator-sketch.html */
+@utility key {
+  @apply flex h-14 items-center justify-center rounded-2xl bg-surface text-[1.5rem] font-medium text-fg-strong select-none sm:h-16
+    transition-[background-color,transform] duration-(--duration-fast) ease-(--ease-standard)
+    hover:bg-surface-2 active:scale-95 disabled:pointer-events-none disabled:opacity-50
+    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint;
+}
+@utility key-fn {
+  @apply bg-overlay text-fg hover:bg-surface-2;
+}
+@utility key-op {
+  @apply bg-brand-500 text-white hover:bg-brand-400;
+}
