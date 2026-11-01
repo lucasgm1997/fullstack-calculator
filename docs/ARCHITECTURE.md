@@ -136,7 +136,9 @@ Every exit from this flowchart is a JSON response.
 ```mermaid
 flowchart TD
     start([POST /api/calculate]) --> mw[Gin middleware<br/>Logger + Recovery]
-    mw --> limit[Limit body to 4 KB]
+    mw --> rl{rate limit<br/>budget left for<br/>client IP?}
+    rl -- no --> e429[429 too many requests<br/>+ Retry-After]
+    rl -- yes --> limit[Limit body to 4 KB]
     limit --> bind{Bind JSON<br/>into DTO}
 
     bind -- "body > 4 KB" --> e413[400 request body too large]
@@ -165,7 +167,7 @@ flowchart TD
 
     classDef err fill:#ff566722,stroke:#ff5667,color:#ff5667
     classDef good fill:#9ff4d922,stroke:#5eead4
-    class e413,etype,ejson,eop,emissA,emissB,ediv,esqrt,enf err
+    class e429,e413,etype,ejson,eop,emissA,emissB,ediv,esqrt,enf err
     class ok good
 ```
 
@@ -195,7 +197,9 @@ Dependencies point inward. `domain` imports nothing from the project, and only `
 ```mermaid
 flowchart TD
     main[cmd/api<br/>main.go] --> router
+    main --> config[internal/config<br/>env vars]
     router[internal/router] --> handler
+    router --> mwpkg[internal/middleware<br/>rate limiting]
     router --> docs[internal/docs<br/>embedded openapi.yaml]
     router --> usecase
     handler[internal/handler] --> usecase

@@ -93,6 +93,17 @@ Let's Encrypt needs a domain name, not a bare IP.
 | Logs | `sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml logs -f` |
 | Stop | `sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml down` |
 
+## Tuning the rate limit
+
+The API allows 20 requests per minute per client IP by default. To change it, add the values to `~/calculator/.env` (next to `SITE_ADDRESS`) and re-run `setup.sh`:
+
+```bash
+RATE_LIMIT_REQUESTS=10
+RATE_LIMIT_WINDOW=1m
+```
+
+The real client IP is preserved through Caddy → nginx → Go, so each visitor gets their own budget. Spoofed `X-Forwarded-For` headers are discarded by Caddy. For protection against volumetric DDoS, put Cloudflare (free plan) or OCI WAF in front of the VM.
+
 ## Troubleshooting
 
 | Symptom | Likely cause |
