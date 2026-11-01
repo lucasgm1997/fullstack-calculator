@@ -5,7 +5,7 @@ A calculator with a **React + TypeScript + Vite** frontend and a **Go + Gin** RE
 - **Operations:** add, subtract, multiply, divide, plus optional power, square root and percentage
 - **Validation and errors:** malformed JSON, wrong types, missing operands, unsupported operations, division by zero, square root of a negative number, overflow
 - **UI:** keypad with physical keyboard support, validation feedback, an API status indicator, a "Last API call" inspector and calculation history. Mobile-first layout built on the Sezzle-inspired design system in [`design-system/`](design-system/DESIGN.md)
-- **Tests:** Go unit and HTTP integration tests (100% statement coverage of `internal/`), plus Vitest unit and React Testing Library + MSW integration tests
+- **Tests:** Go unit and HTTP integration tests (100% statement coverage of `internal/`), Vitest unit and React Testing Library + MSW integration tests, and **Playwright E2E** tests of the real React app against the real Go API, on desktop and mobile
 - **Docker:** multi-stage images and Docker Compose, with nginx proxying `/api`
 - **CI:** GitHub Actions for formatting, lint, type check, tests with coverage, builds and the Docker build
 - **API docs:** an OpenAPI 3 spec with interactive **Swagger UI** at [`/api/docs`](#api-documentation-swagger--openapi), plus Mermaid diagrams in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
@@ -100,6 +100,8 @@ frontend/                     React + TypeScript + Vite + Tailwind v4
     utils/entry.ts            pure input-editing / number-formatting helpers
   src/lib/api.ts              fetch wrapper, base URL from env
   src/tests/                  Vitest setup + MSW mock server
+  e2e/                        Playwright E2E tests (real frontend + real API)
+  playwright.config.ts        starts the Go API + Vite, desktop & mobile projects
 design-system/                tokens.css (Tailwind v4 @theme), DESIGN.md, sketch
 compose.yaml                  frontend (nginx) + backend
 ```
@@ -174,7 +176,32 @@ npm run lint && npm run typecheck
 - `hooks/useCalculator.test.ts`: the keypad state machine (chaining, switching operator, unary ops, validation, error recovery, history cap)
 - `CalculatorPage.test.tsx`: integration from View to hook to service to mocked HTTP (keypad, keyboard, error display, API status, advanced mode)
 
-Current results: frontend 44 tests, 94% statements and 98% lines. Backend 100% statements of `internal/`.
+**End-to-end (Playwright)**
+
+```bash
+cd frontend
+npx playwright install chromium   # first time only
+npm run test:e2e                  # headless, desktop + mobile (Pixel 7)
+npm run test:e2e:ui               # interactive UI mode
+```
+
+Playwright starts its **own** Go API (`go run`, port 18080) and Vite app (port 4173) and shuts them down afterwards. You don't need to start anything first, and a dev server or Docker stack that is already running is never reused by mistake. Go must be installed.
+
+Nothing is mocked: the real browser goes through the real React app and the Vite proxy to the real Go API. That catches things MSW cannot, such as contract drift between the TypeScript types and the Go DTOs. The tests in `e2e/calculator.spec.ts` cover:
+
+| Test | What it proves |
+| --- | --- |
+| calculates with the keypad and records the call | happy path; the inspector shows the real request and response (`200`, `"result": 36`) |
+| chains operations from the keyboard | `2+3*4⏎` = `20` when typed at full speed |
+| shows the division by zero error and recovers | the backend's `400` error is shown in red; fixing the divisor and retrying works |
+| validates a missing second number without calling the API | client-side validation sends **no** request |
+| runs advanced operations and backend validation | √, percentage, and the backend's "square root of a negative number" error |
+
+Each test runs in a desktop project and a mobile project (Pixel 7 viewport with touch), 10 runs in total. On failure, the trace, screenshot and HTML report are kept in `frontend/test-results` and `frontend/playwright-report`, and CI uploads them as an artifact.
+
+> **A bug found by E2E.** The keyboard test first failed with `5` instead of `20`. The UI was **dropping** keystrokes typed while the chained `2 + 3` request was in flight. MSW answers instantly, so the mocked tests had never hit this. The hook now queues input and applies it in order (see the design decisions below). A unit regression test with a deliberately slow mocked response checks this; it fails on the old code and passes on the fix.
+
+Current results: frontend 45 unit and integration tests (96% statements, 98% lines) and 10 E2E runs, all passing. Backend 100% statements of `internal/`.
 
 ## API
 
@@ -274,9 +301,8 @@ curl -X POST localhost:8080/api/calculate -H 'Content-Type: application/json' \
 - one decimal point
 - at most 15 significant digits (the float64 exact range)
 - "Enter a second number" when `=` is pressed without a second operand
-- no new input while a request is in flight
 
-A `useRef` guard prevents double submits from fast key presses.
+**Input is ordered, never dropped.** `useCalculator` runs actions one at a time. Keys pressed while a request is in flight (fast typing, a paste, a slow network) are queued and applied after the response, in order, so `2+3*4⏎` always gives `20`. The keypad state is kept in a ref, so a queued action reads the latest value rather than a stale render. This also prevents double submits.
 
 **Display formatting.** Results are rounded to 12 significant digits for display only, so `0.1 + 0.2` shows `0.3`. The full-precision value is kept for further calculations. Very large or very small numbers use exponential notation.
 
@@ -295,7 +321,8 @@ A `useRef` guard prevents double submits from fast key presses.
 - Numbers are IEEE-754 float64, so very large integers lose precision beyond 15–16 digits.
 - History is kept in memory and is lost on reload.
 - The "Last API call" panel shows the error body for HTTP errors. For network failures there is no body, so it shows "network error".
-- Not implemented: Playwright E2E tests (optional), rate limiting and authentication.
+- E2E tests run in Chromium only (desktop and a Pixel 7 viewport). WebKit and Firefox are not included, to keep CI fast.
+- Not implemented: rate limiting and authentication.
 
 ## AI usage
 
