@@ -3,6 +3,8 @@ services:
     build: ./backend
     environment:
       PORT: "8080"
+      RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS:-20}
+      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-1m}
     ports:
       - "8080:8080"
     restart: unless-stopped
