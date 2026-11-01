@@ -47,7 +47,11 @@ fi
 cd "$APP_DIR"
 
 echo "==> Building and starting (SITE_ADDRESS=${SITE_ADDRESS})"
-echo "SITE_ADDRESS=${SITE_ADDRESS}" >.env
+# Update only SITE_ADDRESS, keeping other settings (e.g. RATE_LIMIT_*) in .env.
+touch .env
+grep -v '^SITE_ADDRESS=' .env >.env.tmp || true
+echo "SITE_ADDRESS=${SITE_ADDRESS}" >>.env.tmp
+mv .env.tmp .env
 sudo docker compose -f compose.yaml -f deploy/oracle/compose.prod.yaml up -d --build --remove-orphans
 sudo docker image prune -f >/dev/null
 

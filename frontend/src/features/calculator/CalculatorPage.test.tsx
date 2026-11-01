@@ -63,6 +63,20 @@ describe('CalculatorPage', () => {
     expect(screen.getByText('network error')).toBeInTheDocument()
   })
 
+  it('shows a rate limit message and keeps the input', async () => {
+    server.use(
+      http.post('/api/calculate', () =>
+        HttpResponse.json({ error: 'too many requests, try again in 5 seconds' }, { status: 429 }),
+      ),
+    )
+    const { press } = renderPage()
+    await press('2', 'Add', '3', 'Equals')
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Too many requests, try again in 5 seconds')
+    expect(screen.getByText('429')).toBeInTheDocument()
+    expect(display()).toHaveTextContent('3')
+  })
+
   it('supports the physical keyboard', async () => {
     const { user } = renderPage()
     await user.keyboard('7-2{Enter}')

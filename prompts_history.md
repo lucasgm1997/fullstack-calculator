@@ -20,3 +20,6 @@ Prompts given to the AI coding agent (Claude Code) during development, in order 
 14. > (pasted link) https://www.oracle.com/cloud/sign-in.html (tracking parameters removed)
 15. > instale https://github.com/oracle/oci-cli
 16. > first of all, upload the repo to github
+17. > let's try to deploy, install oracle cli
+18. > i am on
+19. > let's implement rate limiting, restricting it to a small number of test calls to prevent attacks such as DDoS.
